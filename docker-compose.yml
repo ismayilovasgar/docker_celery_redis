@@ -24,7 +24,9 @@ services:
     container_name: celery1
     build:
       context: ./dcelery
-    command: celery --app=dcelery worker -l INFO -Q queue1
+    command: celery --app=dcelery worker -l INFO  
+    # command: celery --app=dcelery worker -l INFO --concurrency=1
+    # command: celery --app=dcelery worker -l INFO -Q celery_1,celery_2,celery_3,
     # command: celery -A dcelery worker --loglevel=info
     # command: celery -A dcelery worker --uid=nobody --loglevel=INFO
     volumes:
@@ -35,21 +37,21 @@ services:
       - DEBUG=1
       - SECRET_KEY=django-insecure-td=+9m#af*sdi!@q2+d*^%-dw89r$m8skkp9^6prjw$!-qnf&y
       - ALLOWED_HOSTS=localhost,127.0.0.1 
-      - CELERY_BROKER=redis://redis:6379/0      # Redis broker URL'si
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Redis backend URL'si
+      - CELERY_BROKER=redis://redis:6379/0      
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0 
     depends_on:
       - redis
       - django
 
 
-  celery2:
-    container_name: celery2
-    build:
-      context: ./celeryworker
-      dockerfile: Dockerfile
-    command: celery -A celerytask worker --loglevel=INFO -Q queue2
-    volumes:
-      - ./celeryworker:/usr/src/app/
-    depends_on:
-      - redis
-      - django
+  # celery2:
+  #   container_name: celery2
+  #   build:
+  #     context: ./celeryworker
+  #     dockerfile: Dockerfile
+  #   command: celery -A celerytask worker --loglevel=INFO -Q queue2
+  #   volumes:
+  #     - ./celeryworker:/usr/src/app/
+  #   depends_on:
+  #     - redis
+  #     - django
