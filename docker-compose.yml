@@ -24,7 +24,8 @@ services:
     container_name: celery1
     build:
       context: ./dcelery
-    command: celery --app=dcelery worker -l INFO  
+    command: celery --app=dcelery worker -l INFO -Q tasks
+    # command: celery --app=dcelery worker -l INFO  
     # command: celery --app=dcelery worker -l INFO --concurrency=1
     # command: celery --app=dcelery worker -l INFO -Q celery_1,celery_2,celery_3,
     # command: celery -A dcelery worker --loglevel=info
