@@ -93,10 +93,21 @@ app.conf.worker_concurrency = 1
 base_dir = os.getcwd()
 task_folder = os.path.join(base_dir, "dcelery", "celery_tasks")
 
-if os.path.exists(task) and os.path.isdir(task_folder):
-    task_modules=[]
+if os.path.exists(task_folder) and os.path.isdir(task_folder):
+    task_modules = []
+    for filename in os.listdir(task_folder):
+        if filename.startswith("ex") and filename.endswith(".py"):
+            module_name = f"dcelery.celery_tasks.{filename[:-3]}"
 
-app.autodiscover_tasks()
+            module = __import__(module_name, fromlist=["*"])
+
+            for name in dir(module):
+                obj = getattr(module, name)
+                # if callable(obj) and name.startswith("my_task"):
+                if callable(obj):
+                    task_modules.append(f"{module_name}.{name}")
+
+    app.autodiscover_tasks(task_modules)
 ## ----------------------------------
 
 
